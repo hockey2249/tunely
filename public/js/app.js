@@ -34,6 +34,21 @@ $(document).ready(function() {
 
 });
 
+
+function handleDeleteAlbumClick(e) {
+  var albumId = $(this).parents('.album').data('album-id');
+  console.log('someone wants to delete album id=' + albumId );
+  $.ajax({
+    method: 'DELETE',
+    url: ('/api/albums/' + albumId),
+    success: function() {
+      console.log("He's dead Jim");
+      $('[data-album-id='+ albumId + ']').remove();
+    }
+  });
+}
+
+// handles the modal fields and POSTing the form to the server
 function handleNewSongSubmit(e) {
   var albumId = $('#songModal').data('album-id');
   var songName = $('#songName').val();
@@ -67,18 +82,22 @@ function handleNewSongSubmit(e) {
     });
 }
 
+
+
 function buildSongsHtml(songs) {
-  var songText = "  &ndash; ";
+  var songText = "    &ndash; ";
   songs.forEach(function(song) {
-     songText = songText + "(" + song.trackNumber + ") " + song.name + " &ndash; ";
+    songText = songText + "(" + song.trackNumber + ") " + song.name + " &ndash; ";
   });
   var songsHtml  =
-  "    <li class='list-group-item'>" +
-  "    <h4 class='inline-header'>Songs:</h4>" +
-  "    <span>" + songText + "</span>" +
-  "       </li>";
+   "                      <li class='list-group-item'>" +
+   "                        <h4 class='inline-header'>Songs:</h4>" +
+   "                         <span>" + songText + "</span>" +
+   "                      </li>";
   return songsHtml;
 }
+
+
 
 // this function takes a single album and renders it to the page
 function renderAlbum(album) {
@@ -103,13 +122,16 @@ function renderAlbum(album) {
   "                      </li>" +
   "                      <li class='list-group-item'>" +
   "                        <h4 class='inline-header'>Artist Name:</h4>" +
-  "                        <span class='artist-name'>" +  album.artistName + "</span>" +
+  "                        <span class='artist-name'>" + album.artistName + "</span>" +
   "                      </li>" +
   "                      <li class='list-group-item'>" +
   "                        <h4 class='inline-header'>Released date:</h4>" +
-  "                        <span class='album-releaseDate'>" + album.releaseDate + "</span>" +
+  "                        <span class='album-name'>" + album.releaseDate + "</span>" +
   "                      </li>" +
-                          buildSongsHtml(album.songs) +
+
+  buildSongsHtml(album.songs) +
+
+
   "                    </ul>" +
   "                  </div>" +
   "                </div>" +
@@ -117,16 +139,14 @@ function renderAlbum(album) {
 
   "              </div>" + // end of panel-body
 
-  "              <div class='panel-footer'>" +       
-  "               <button class='btn btn-primary add-song'>Add Song</button>" +
-   "               <button class='btn btn-primary delete-song'>Delete Song</button>" +   
-"                 </div>" +
-
+  "              <div class='panel-footer'>" +
+  "                <button class='btn btn-primary add-song'>Add Song</button>" +
+  "                <button class='btn btn-danger delete-album'>Delete Album</button>" +
+  "              </div>" +
 
   "            </div>" +
   "          </div>" +
   "          <!-- end one album -->";
 
-  // render to the page with jQuery 
-    $('#albums').append(albumHtml);
-}
+  $('#albums').prepend(albumHtml);
+ }
